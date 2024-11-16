@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "807853167805",
+    "project_id": "flagrush-c280f",
+    "storage_bucket": "flagrush-c280f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:807853167805:android:6bf2711454f434ce37d3d4",
+        "android_client_info": {
+          "package_name": "dev.sajo.flagrush"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCy1C4N0fcsjU6GXM16O7yeerYhuix6Nzs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
