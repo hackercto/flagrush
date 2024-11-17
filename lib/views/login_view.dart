@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flagrush/constants/routes.dart';
 import 'package:flagrush/firebase_options.dart';
+import 'package:flagrush/utilities/show_error_dialog.dart';
 import 'package:flutter/material.dart';
 import 'dart:developer' as devtools show log;
 
@@ -78,11 +79,24 @@ class _LoginViewState extends State<LoginView> {
               } on FirebaseAuthException catch (e) {
                 if (e.code == 'user-not-found') {
                   devtools.log('No user found for that email.');
+                  await showErrorDialog(
+                    context, 
+                    'No user found for that email. Please register first.',
+                  );
                 } else if (e.code == 'wrong-password') {
                   devtools.log('Wrong password provided for that user.');
+                  await showErrorDialog(
+                    context, 
+                    'Wrong credentials. Please try again.',
+                  );
                 } else {
                   devtools.log('Failed with error code: ${e.code}');
                   devtools.log(e.message.toString());
+                  // show this to the user
+                  await showErrorDialog(
+                    context, 
+                    e.toString(),
+                  );
                 }
               }
               if (FirebaseAuth.instance.currentUser != null) {

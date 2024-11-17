@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flagrush/constants/routes.dart';
 import 'package:flagrush/firebase_options.dart';
+import 'package:flagrush/utilities/show_error_dialog.dart';
 import 'package:flutter/material.dart';
 import 'dart:developer' as devtools show log;
 
@@ -78,11 +79,14 @@ class _RegisterViewState extends State<RegisterView> {
               } on FirebaseAuthException catch (e) {
                 if (e.code == 'weak-password') {
                   devtools.log('The password provided is too weak.');
+                  showErrorDialog(context, 'The password provided is too weak.');
                 } else if (e.code == 'email-already-in-use') {
                   devtools.log('The account already exists for that email.');
+                  showErrorDialog(context, 'The account already exists for that email.');
                 } else {
                   devtools.log('Failed with error code: ${e.code}');
                   devtools.log(e.message.toString());
+                  showErrorDialog(context, e.message.toString());
                 }
               }
             },
