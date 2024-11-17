@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flagrush/constants/routes.dart';
 import 'package:flagrush/firebase_options.dart';
 import 'package:flutter/material.dart';
 import 'dart:developer' as devtools show log;
@@ -86,7 +87,7 @@ class _LoginViewState extends State<LoginView> {
               }
               if (FirebaseAuth.instance.currentUser != null) {
                 Navigator.of(context).pushNamedAndRemoveUntil(
-                  '/notes',
+                  notesRoute,
                   (route) => false,
                 );
               }
@@ -96,7 +97,7 @@ class _LoginViewState extends State<LoginView> {
           TextButton(
             onPressed: () async {
               Navigator.of(context).pushNamedAndRemoveUntil(
-                '/register',
+                registerRoute,
                 (route) => false,
               );
             },

@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flagrush/constants/routes.dart';
 import 'package:flagrush/firebase_options.dart';
 import 'package:flutter/material.dart';
 import 'dart:developer' as devtools show log;
@@ -84,19 +85,13 @@ class _RegisterViewState extends State<RegisterView> {
                   devtools.log(e.message.toString());
                 }
               }
-              if (FirebaseAuth.instance.currentUser != null) {
-                Navigator.of(context).pushNamedAndRemoveUntil(
-                  '/verify-email',
-                  (route) => false,
-                );
-              }
             },
             child: const Text('Register')
           ),
           TextButton(
             onPressed: () async {
               Navigator.of(context).pushNamedAndRemoveUntil(
-                '/login',
+                loginRoute,
                 (route) => false,
               );
             },
