@@ -68,25 +68,24 @@ class _RegisterViewState extends State<RegisterView> {
               final email = _email.text;
               final password = _password.text;
               try {
-                final userCredential =
-                    await FirebaseAuth.instance.createUserWithEmailAndPassword(
+                await FirebaseAuth.instance.createUserWithEmailAndPassword(
                   email: email,
                   password: password,
                 );
-                final user = userCredential.user;
-                devtools.log(userCredential.toString());
-                devtools.log('User: $user');
+                Navigator.of(context).pushNamed(
+                  verifyEmailRoute
+                );
               } on FirebaseAuthException catch (e) {
                 if (e.code == 'weak-password') {
                   devtools.log('The password provided is too weak.');
-                  showErrorDialog(context, 'The password provided is too weak.');
+                  await showErrorDialog(context, 'The password provided is too weak.');
                 } else if (e.code == 'email-already-in-use') {
                   devtools.log('The account already exists for that email.');
-                  showErrorDialog(context, 'The account already exists for that email.');
+                  await showErrorDialog(context, 'The account already exists for that email.');
                 } else {
                   devtools.log('Failed with error code: ${e.code}');
                   devtools.log(e.message.toString());
-                  showErrorDialog(context, e.message.toString());
+                  await showErrorDialog(context, e.message.toString());
                 }
               }
             },
