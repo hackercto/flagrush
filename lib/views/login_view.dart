@@ -83,6 +83,12 @@ class _LoginViewState extends State<LoginView> {
                   print(e.message);
                 }
               }
+              if (FirebaseAuth.instance.currentUser != null) {
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                  '/notes',
+                  (route) => false,
+                );
+              }
             },
             child: const Text('Login')
           ),

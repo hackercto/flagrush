@@ -83,6 +83,12 @@ class _RegisterViewState extends State<RegisterView> {
                   print(e.message);
                 }
               }
+              if (FirebaseAuth.instance.currentUser != null) {
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                  '/verify-email',
+                  (route) => false,
+                );
+              }
             },
             child: const Text('Register')
           ),
