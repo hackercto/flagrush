@@ -1,7 +1,6 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flagrush/constants/routes.dart';
-import 'package:flagrush/firebase_options.dart';
+import 'package:flagrush/services/auth/auth_exceptions.dart';
+import 'package:flagrush/services/auth/auth_service.dart';
 import 'package:flagrush/utilities/show_error_dialog.dart';
 import 'package:flutter/material.dart';
 import 'dart:developer' as devtools show log;
@@ -31,14 +30,6 @@ class _RegisterViewState extends State<RegisterView> {
     super.dispose();
   }
 
-  Future initFirebase() async {
-    // sleep for 2 seconds to simulate a long running task
-    await Future.delayed(const Duration(seconds: 2));
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -64,42 +55,46 @@ class _RegisterViewState extends State<RegisterView> {
             ),
           ),
           TextButton(
-            onPressed: () async {
-              final email = _email.text;
-              final password = _password.text;
-              try {
-                await FirebaseAuth.instance.createUserWithEmailAndPassword(
-                  email: email,
-                  password: password,
-                );
-                Navigator.of(context).pushNamed(
-                  verifyEmailRoute
-                );
-              } on FirebaseAuthException catch (e) {
-                if (e.code == 'weak-password') {
-                  devtools.log('The password provided is too weak.');
-                  await showErrorDialog(context, 'The password provided is too weak.');
-                } else if (e.code == 'email-already-in-use') {
-                  devtools.log('The account already exists for that email.');
-                  await showErrorDialog(context, 'The account already exists for that email.');
-                } else {
-                  devtools.log('Failed with error code: ${e.code}');
-                  devtools.log(e.message.toString());
-                  await showErrorDialog(context, e.message.toString());
+              onPressed: () async {
+                final email = _email.text;
+                final password = _password.text;
+                try {
+                  await AuthService.firebase().createUser(
+                    email: email,
+                    password: password,
+                  );
+                  Navigator.of(context).pushNamed(verifyEmailRoute);
+                } on WeakPasswordAuthException {
+                  await showErrorDialog(
+                    context,
+                    'The password provided is too weak.',
+                  );
+                } on EmailAlreadyInUseAuthException {
+                  await showErrorDialog(
+                    context,
+                    'The account already exists for that email.',
+                  );
+                } on InvalidEmailAuthException {
+                  await showErrorDialog(
+                    context,
+                    'The email provided is invalid.',
+                  );
+                } on GenericAuthException {
+                  await showErrorDialog(
+                    context,
+                    'Registration failed. Please try again.',
+                  );
                 }
-              }
-            },
-            child: const Text('Register')
-          ),
+              },
+              child: const Text('Register')),
           TextButton(
-            onPressed: () async {
-              Navigator.of(context).pushNamedAndRemoveUntil(
-                loginRoute,
-                (route) => false,
-              );
-            },
-            child: const Text('Already have an account? Login here')
-          ),
+              onPressed: () async {
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                  loginRoute,
+                  (route) => false,
+                );
+              },
+              child: const Text('Already have an account? Login here')),
         ],
       ),
     );
