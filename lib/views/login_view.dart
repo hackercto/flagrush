@@ -76,7 +76,6 @@ class _LoginViewState extends State<LoginView> {
                 devtools.log('User verified: ${user?.emailVerified}');
                 if (user?.emailVerified ?? false) {
                   devtools.log("We decided that the user's email is verified.");
-                  devtools.log("We decided that the user's email is verified.");
                   Navigator.of(context).pushNamedAndRemoveUntil(
                     notesRoute,
                     (route) => false,
