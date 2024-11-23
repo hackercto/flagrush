@@ -31,8 +31,14 @@ class _NotesViewState extends State<NotesView> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Notes'),
+          title: const Text('My Notes'),
           actions: [
+            IconButton(
+              onPressed: () {
+                Navigator.of(context).pushNamed(newNoteRoute);
+              },
+              icon: const Icon(Icons.add),
+            ),
             PopupMenuButton<MenuAction>(
               onSelected: (action) async {
                 switch (action) {
@@ -63,12 +69,6 @@ class _NotesViewState extends State<NotesView> {
             future: NotesService().getOrCreateUser(email: userEmail),
             builder: (context, snapshot) {
               switch (snapshot.connectionState) {
-                case ConnectionState.none:
-                // TODO: Handle this case.
-                case ConnectionState.waiting:
-                // TODO: Handle this case.
-                case ConnectionState.active:
-                // TODO: Handle this case.
                 case ConnectionState.done:
                   return StreamBuilder(
                       stream: _notesService.allNotes,
