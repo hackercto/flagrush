@@ -1,6 +1,7 @@
 import 'package:flagrush/constants/routes.dart';
 import 'package:flagrush/enums/menu_action.dart';
 import 'package:flagrush/services/auth/auth_service.dart';
+import 'package:flagrush/services/crud/notes_service.dart';
 import 'package:flutter/material.dart';
 
 class NotesView extends StatefulWidget {
@@ -11,44 +12,78 @@ class NotesView extends StatefulWidget {
 }
 
 class _NotesViewState extends State<NotesView> {
-  get devtools => null;
+  late final NotesService _notesService;
+  String get userEmail => AuthService.firebase().currentUser!.email!;
+
+  @override
+  void initState() {
+    _notesService = NotesService();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _notesService.close();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Notes'),
-        actions: [
-          PopupMenuButton<MenuAction>(
-            onSelected: (action) async {
-              switch (action) {
-                case MenuAction.logout:
-                  final shouldLogout = await showLogoutDialog(context);
-                  if (shouldLogout) {
-                    await AuthService.firebase().logOut();
-                    Navigator.of(context).pushNamedAndRemoveUntil(
-                      loginRoute,
-                      (route) => false,
-                    );
-                  }
-                  break;
+        appBar: AppBar(
+          title: const Text('Notes'),
+          actions: [
+            PopupMenuButton<MenuAction>(
+              onSelected: (action) async {
+                switch (action) {
+                  case MenuAction.logout:
+                    final shouldLogout = await showLogoutDialog(context);
+                    if (shouldLogout) {
+                      await AuthService.firebase().logOut();
+                      Navigator.of(context).pushNamedAndRemoveUntil(
+                        loginRoute,
+                        (route) => false,
+                      );
+                    }
+                    break;
+                }
+              },
+              itemBuilder: (context) {
+                return const [
+                  PopupMenuItem(
+                    value: MenuAction.logout,
+                    child: Text('Logout'),
+                  ),
+                ];
+              },
+            ),
+          ],
+        ),
+        body: FutureBuilder(
+            future: NotesService().getOrCreateUser(email: userEmail),
+            builder: (context, snapshot) {
+              switch (snapshot.connectionState) {
+                case ConnectionState.none:
+                // TODO: Handle this case.
+                case ConnectionState.waiting:
+                // TODO: Handle this case.
+                case ConnectionState.active:
+                // TODO: Handle this case.
+                case ConnectionState.done:
+                  return StreamBuilder(
+                      stream: _notesService.allNotes,
+                      builder: (context, snapshot) {
+                        switch (snapshot.connectionState) {
+                          case ConnectionState.waiting:
+                            return const Text("Waiting for all notes...");
+                          default:
+                            return const CircularProgressIndicator();
+                        }
+                      });
+                default:
+                  return const CircularProgressIndicator();
               }
-            },
-            itemBuilder: (context) {
-              return const [
-                PopupMenuItem(
-                  value: MenuAction.logout,
-                  child: Text('Logout'),
-                ),
-              ];
-            },
-          ),
-        ],
-      ),
-      body: Center(
-        child: Text('Hello World'),
-      ),
-    );
+            }));
   }
 }
 
