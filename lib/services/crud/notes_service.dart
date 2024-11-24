@@ -142,6 +142,7 @@ class NotesService {
   }
 
   Future<DatabaseUser> getUser({required String email}) async {
+    print("TRYING TO GET USER");
     await _ensureDbIsOpen();
     final db = _getDatabaseOrThrow();
     final results = await db.query(
@@ -150,29 +151,60 @@ class NotesService {
       where: 'email = ?',
       whereArgs: [email.toLowerCase()],
     );
+    print("PRINTING RESULTS");
+    print(results);
     if (results.isEmpty) {
+      print("EMPTY USER");
       throw CouldNotFindUser();
     } else {
-      return DatabaseUser.fromRow(results.first);
+      print("USER FOUND");
+      final returnUser;
+      try {
+        print("RESULTS AGAIN");
+        print("Type of results.first: ${results.first.runtimeType}");
+        print("Contents of results.first: ${results.first}");
+        print("Keys in results.first: ${results.first.keys}");
+        print("ID: ${results.first['id']}");
+        print("Email: ${results.first['email']}");
+        final returnUser = DatabaseUser.fromRow(results.first);
+        print("Created user: $returnUser");
+        return returnUser;
+      } catch (e) {
+        print("RETHROWING $e");
+        rethrow;
+      }
     }
   }
 
   Future<DatabaseUser> createUser({required String email}) async {
+    print("TRYING TO CREATE USER");
     await _ensureDbIsOpen();
+    print("REACHED 1");
     final db = _getDatabaseOrThrow();
+    print("REACHED 2");
     final results = await db.query(
       userTableName,
       limit: 1,
       where: 'email = ?',
       whereArgs: [email.toLowerCase()],
     );
+    print("REACHED 3");
+    print(results);
     if (results.isNotEmpty) {
       throw UserAlreadyExists();
     }
-    final userId = await db.insert(userTableName, {
-      emailColumn: [email.toLowerCase()],
-    });
+    print("REACHED 4");
+    final userId;
+    try {
+      userId = await db.insert(userTableName, {
+        emailColumn: email.toLowerCase(),
+      });
+    } catch (e) {
+      print(e);
+      rethrow;
+    }
 
+    print("ThIS WORKED");
     return DatabaseUser(id: userId, email: email);
   }
 
@@ -243,7 +275,7 @@ class DatabaseUser {
 
   DatabaseUser.fromRow(Map<String, Object?> map)
       : id = map[idColumn] as int,
-        email = map['emailColumn'] as String;
+        email = map[emailColumn] as String;
 
   @override
   String toString() => 'Person (id: $id, email: $email)';
