@@ -1,5 +1,5 @@
 import 'package:flagrush/constants/routes.dart';
-import 'package:flagrush/utilities/show_error_dialog.dart';
+import 'package:flagrush/utilities/dialogs/error_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flagrush/services/auth/auth_service.dart';
 import 'package:flagrush/services/auth/auth_exceptions.dart';
