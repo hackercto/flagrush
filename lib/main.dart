@@ -1,6 +1,6 @@
 import 'package:flagrush/constants/routes.dart';
 import 'package:flagrush/views/login_view.dart';
-import 'package:flagrush/views/notes/new_note_view.dart';
+import 'package:flagrush/views/notes/create_update_note_view.dart';
 import 'package:flagrush/views/notes/notes_view.dart';
 import 'package:flagrush/views/register_view.dart';
 import 'package:flagrush/views/verify_email_view.dart';
@@ -21,7 +21,7 @@ void main() {
         registerRoute: (context) => const RegisterView(),
         verifyEmailRoute: (context) => const VerifyEmailView(),
         notesRoute: (context) => const NotesView(),
-        newNoteRoute: (context) => const NewNoteView(),
+        createOrUpdateNoteRoute: (context) => const CreateUpdateNoteView(),
       }));
 }
 
